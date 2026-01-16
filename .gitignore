@@ -1,0 +1,24 @@
+# Build files
+build/
+build_win/
+*.o
+*.exe
+ChessGame
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Compiled files
+*.out
+*.app
+
+# Save files (optional - xóa dòng này nếu muốn lưu save game)
+public/save.txt
