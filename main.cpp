@@ -1,13 +1,35 @@
+// Chess Game - MVC Architecture
+// Main entry point
+
 #include <SFML/Graphics.hpp>
-#include "GameController.h"
 #include <iostream>
+
+// Include all components in correct order
+// Model layer
+#include "model/Piece.cpp"
+#include "model/Position.cpp"
+#include "model/Move.cpp"
+#include "model/Board.cpp"
+#include "model/MoveGenerator.cpp"
+#include "model/GameState.cpp"
+#include "model/AIPlayer.cpp"
+
+// View layer
+#include "view/AssetManager.cpp"
+#include "view/BoardView.cpp"
+#include "view/UIView.cpp"
+#include "view/MenuView.cpp"
+
+// Controller layer
+#include "controller/SaveLoadManager.cpp"
+#include "controller/GameController.cpp"
 
 /**
  * Entry point của chương trình
  * Game cờ vua với kiến trúc MVC, hỗ trợ 2 chế độ PVP và PVE
  */
 int main() {
-    sf::RenderWindow window(sf::VideoMode(900, 700), "Chess Game");
+    sf::RenderWindow window(sf::VideoMode(900, 700), "Chess Game - MVC");
     window.setFramerateLimit(60);
     
     // Set window icon
@@ -19,6 +41,7 @@ int main() {
     GameController controller;
     
     std::cout << "Chess Game Started!\n";
+    std::cout << "Architecture: MVC (Model-View-Controller)\n";
     std::cout << "Controls:\n";
     std::cout << "- Menu: UP/DOWN arrows, ENTER\n";
     std::cout << "- Game: Click to select and move\n";
@@ -51,5 +74,6 @@ int main() {
         window.display();
     }
     
+    std::cout << "Game closed. Thank you for playing!\n";
     return 0;
 }

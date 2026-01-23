@@ -1,11 +1,9 @@
-#ifndef BOARDVIEW_H
-#define BOARDVIEW_H
-
 #include <SFML/Graphics.hpp>
-#include "Board.h"
-#include "Position.h"
-#include "AssetManager.h"
 #include <vector>
+#include <string>
+
+// Forward declarations - these will be defined in model files
+// struct Position, class Board, struct Move already defined in model layer
 
 /**
  * Class render bàn cờ và quân cờ
@@ -87,8 +85,6 @@ public:
             sf::RectangleShape highlight(sf::Vector2f(SQUARE_SIZE, SQUARE_SIZE));
             highlight.setPosition(getPixelPosition(highlightedSquare));
             highlight.setFillColor(sf::Color(255, 255, 0, 100)); // Vàng semi-transparent
-            highlight.setOutlineColor(sf::Color::Yellow);
-            highlight.setOutlineThickness(3);
             highlight.setOutlineColor(sf::Color::Yellow);
             highlight.setOutlineThickness(3);
             window.draw(highlight);
@@ -174,5 +170,3 @@ public:
     int getMargin() const { return MARGIN; }
     int getBoardSize() const { return BOARD_SIZE; }
 };
-
-#endif // BOARDVIEW_H

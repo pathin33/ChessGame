@@ -1,11 +1,8 @@
-#ifndef SAVELOADMANAGER_H
-#define SAVELOADMANAGER_H
-
-#include "GameState.h"
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <iostream>
+#include <vector>
 
 /**
  * Enum cho game mode
@@ -38,7 +35,7 @@ public:
         }
         
         // Write mode
-       file << "MODE:";
+        file << "MODE:";
         if (mode == GameMode::PVP) {
             file << "PVP\n";
         } else {
@@ -113,5 +110,3 @@ public:
         return true;
     }
 };
-
-#endif // SAVELOADMANAGER_H

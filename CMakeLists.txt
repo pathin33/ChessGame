@@ -5,22 +5,12 @@ project(ChessGame)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Find SFML
-find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+# Find SFML (yêu cầu 2.6 trở lên để tương thích MinGW mới)
+find_package(SFML 2.6 COMPONENTS graphics window system REQUIRED)
 
-# Include directories
-include_directories(${PROJECT_SOURCE_DIR}/include)
-
-# Source files
+# Main source file (includes all other .cpp files)
 set(SOURCES
-    src/main.cpp
-    src/Piece.cpp
-    src/Position.cpp
-    src/Move.cpp
-    src/Board.cpp
-    src/MoveGenerator.cpp
-    src/GameState.cpp
-    src/AIPlayer.cpp
+    main.cpp
 )
 
 # Create executable
@@ -36,8 +26,20 @@ add_custom_command(TARGET ChessGame POST_BUILD
     ${CMAKE_BINARY_DIR}/public
 )
 
+# Copy asset folder to build directory
+add_custom_command(TARGET ChessGame POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+    ${CMAKE_SOURCE_DIR}/asset
+    ${CMAKE_BINARY_DIR}/asset
+)
+
 # Print build info
-message(STATUS "Chess Game - CMake Configuration")
+message(STATUS "Chess Game - MVC Architecture - CMake Configuration")
 message(STATUS "C++ Standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "SFML Found: ${SFML_FOUND}")
+message(STATUS "Source Structure: MVC (Model-View-Controller)")
+message(STATUS "  - Model: model/*.cpp")
+message(STATUS "  - View: view/*.cpp")
+message(STATUS "  - Controller: controller/*.cpp")
+message(STATUS "  - Main: main.cpp")

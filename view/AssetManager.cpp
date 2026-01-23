@@ -1,6 +1,3 @@
-#ifndef ASSETMANAGER_H
-#define ASSETMANAGER_H
-
 #include <SFML/Graphics.hpp>
 #include <map>
 #include <string>
@@ -73,5 +70,3 @@ public:
 };
 
 AssetManager* AssetManager::instance = nullptr;
-
-#endif // ASSETMANAGER_H

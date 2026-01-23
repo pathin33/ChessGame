@@ -1,9 +1,6 @@
-#ifndef MOVE_H
-#define MOVE_H
-
-#include "Position.h"
-#include "Piece.h"
-#include <string>
+// Include Piece and Position from model layer
+// Note: In a single .cpp file approach, we rely on compilation order
+// Piece.cpp and Position.cpp should be compiled before this file
 
 /**
  * Enum định nghĩa các loại nước đi đặc biệt
@@ -53,14 +50,50 @@ struct Move {
      * Chuyển nước đi sang notation dạng "e2e4" hoặc "e7e8q" (cho promotion)
      * @return string notation
      */
-    std::string toNotation() const;
+    std::string toNotation() const {
+        std::string notation = from.toNotation() + to.toNotation();
+        
+        if (moveType == MoveType::PROMOTION) {
+            switch (promotionPiece) {
+                case PieceType::QUEEN:  notation += 'q'; break;
+                case PieceType::ROOK:   notation += 'r'; break;
+                case PieceType::BISHOP: notation += 'b'; break;
+                case PieceType::KNIGHT: notation += 'n'; break;
+                default: break;
+            }
+        }
+        
+        return notation;
+    }
     
     /**
      * Tạo Move từ notation (ví dụ: "e2e4", "e7e8q")
      * @param notation: string notation
      * @return Move object
      */
-    static Move fromNotation(const std::string& notation);
+    static Move fromNotation(const std::string& notation) {
+        if (notation.length() < 4) return Move();
+        
+        Position from = Position::fromNotation(notation.substr(0, 2));
+        Position to = Position::fromNotation(notation.substr(2, 2));
+        
+        Move move(from, to);
+        
+        if (notation.length() >= 5) {
+            char promo = notation[4];
+            move.moveType = MoveType::PROMOTION;
+            
+            switch (promo) {
+                case 'q': move.promotionPiece = PieceType::QUEEN; break;
+                case 'r': move.promotionPiece = PieceType::ROOK; break;
+                case 'b': move.promotionPiece = PieceType::BISHOP; break;
+                case 'n': move.promotionPiece = PieceType::KNIGHT; break;
+                default:  move.promotionPiece = PieceType::QUEEN; break;
+            }
+        }
+        
+        return move;
+    }
     
     // So sánh hai nước đi
     bool operator==(const Move& other) const {
@@ -69,5 +102,3 @@ struct Move {
                promotionPiece == other.promotionPiece;
     }
 };
-
-#endif // MOVE_H

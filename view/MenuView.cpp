@@ -1,9 +1,7 @@
-#ifndef MENUVIEW_H
-#define MENUVIEW_H
-
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
+#include <iostream>
 
 /**
  * Class render menu screens
@@ -29,7 +27,7 @@ public:
     
     /**
      * Render main menu
-     * Options: New Game, Continue, Exit
+     * Options: New Game, Load Game, Exit
      */
     void renderMainMenu(sf::RenderWindow& window, int selected) {
         selectedOption = selected;
@@ -37,7 +35,7 @@ public:
         // Title
         sf::Text title;
         title.setFont(font);
-        title.setCharacterSize(52);  // Larger
+        title.setCharacterSize(52);
         title.setStyle(sf::Text::Bold);
         title.setFillColor(sf::Color::White);
         title.setOutlineColor(sf::Color::Black);
@@ -47,12 +45,12 @@ public:
         window.draw(title);
         
         // Menu options
-        std::vector<std::string> options = {"New Game", "Continue", "Exit"};
+        std::vector<std::string> options = {"New Game", "Load Game", "Exit"};
         
         for (size_t i = 0; i < options.size(); i++) {
             sf::Text optionText;
             optionText.setFont(font);
-            optionText.setCharacterSize(36);  // Larger
+            optionText.setCharacterSize(36);
             optionText.setStyle(sf::Text::Bold);
             
             // Highlight selected option
@@ -74,7 +72,7 @@ public:
         // Instructions
         sf::Text instructions;
         instructions.setFont(font);
-        instructions.setCharacterSize(20);  // Larger
+        instructions.setCharacterSize(20);
         instructions.setStyle(sf::Text::Bold);
         instructions.setFillColor(sf::Color(200, 200, 200));
         instructions.setOutlineColor(sf::Color::Black);
@@ -94,7 +92,7 @@ public:
         // Title
         sf::Text title;
         title.setFont(font);
-        title.setCharacterSize(44);  // Larger
+        title.setCharacterSize(44);
         title.setStyle(sf::Text::Bold);
         title.setFillColor(sf::Color::White);
         title.setOutlineColor(sf::Color::Black);
@@ -109,7 +107,7 @@ public:
         for (size_t i = 0; i < modes.size(); i++) {
             sf::Text modeText;
             modeText.setFont(font);
-            modeText.setCharacterSize(36);  // Larger
+            modeText.setCharacterSize(36);
             modeText.setStyle(sf::Text::Bold);
             
             if ((int)i == selectedOption) {
@@ -128,5 +126,3 @@ public:
         }
     }
 };
-
-#endif // MENUVIEW_H

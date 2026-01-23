@@ -1,6 +1,3 @@
-#ifndef POSITION_H
-#define POSITION_H
-
 #include <string>
 
 /**
@@ -30,14 +27,32 @@ struct Position {
      * Chuyển vị trí sang notation chuẩn (e.g., "e2", "a8")
      * @return string dạng "a1" đến "h8"
      */
-    std::string toNotation() const;
+    std::string toNotation() const {
+        if (!isValid()) return "invalid";
+        
+        std::string notation;
+        notation += char('a' + col);
+        notation += char('8' - row);
+        
+        return notation;
+    }
     
     /**
      * Tạo Position từ notation (e.g., "e2" -> Position(6,4))
      * @param notation: string dạng "a1" đến "h8"
      * @return Position object
      */
-    static Position fromNotation(const std::string& notation);
+    static Position fromNotation(const std::string& notation) {
+        if (notation.length() < 2) return Position();
+        
+        int col = notation[0] - 'a';
+        int row = '8' - notation[1];
+        
+        Position pos(row, col);
+        if (!pos.isValid()) return Position();
+        
+        return pos;
+    }
     
     // Toán tử so sánh
     bool operator==(const Position& other) const {
@@ -48,5 +63,3 @@ struct Position {
         return !(*this == other);
     }
 };
-
-#endif // POSITION_H

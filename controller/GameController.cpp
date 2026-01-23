@@ -1,13 +1,6 @@
-#ifndef GAMECONTROLLER_H
-#define GAMECONTROLLER_H
-
 #include <SFML/Graphics.hpp>
-#include "GameState.h"
-#include "AIPlayer.h"
-#include "BoardView.h"
-#include "UIView.h"
-#include "MenuView.h"
-#include "SaveLoadManager.h"
+#include <vector>
+#include <string>
 
 /**
  * Enum cho game phase (state machine)
@@ -20,10 +13,6 @@ enum class GamePhase {
     GAME_OVER       // Game kết thúc
 };
 
-/**
- * Controller chính - điều phối game flow
- * Kết nối Model và View
- */
 class GameController {
 private:
     GameState gameState;
@@ -48,76 +37,6 @@ private:
     // Status message
     std::string statusMessage;
     
-public:
-    /**
-     * Constructor
-     */
-    GameController() 
-        : aiPlayer(3), currentPhase(GamePhase::MENU), gameMode(GameMode::PVP),
-          pieceSelected(false), menuSelection(0), modeSelection(0) {
-    }
-    
-    /**
-     * Handle input events
-     */
-    void handleEvent(const sf::Event& event) {
-        if (currentPhase == GamePhase::MENU) {
-            handleMenuInput(event);
-        } else if (currentPhase == GamePhase::MODE_SELECT) {
-            handleModeSelectInput(event);
-        } else if (currentPhase == GamePhase::PLAYING) {
-            handleGameInput(event);
-        } else if (currentPhase == GamePhase::PROMOTION) {
-            handlePromotionInput(event);
-        }
-    }
-    
-    /**
-     * Update game logic (for AI moves)
-     */
-    void update() {
-        if (currentPhase == GamePhase::PLAYING) {
-            // Nếu là AI mode và đến lượt AI (BLACK)
-            if (gameMode == GameMode::PVE_AI && 
-                gameState.getCurrentTurn() == PieceColor::BLACK) {
-                
-                // AI tính nước đi
-                Move aiMove = aiPlayer.getBestMove(gameState);
-                
-                if (aiMove.from.isValid()) {
-                    gameState.makeMove(aiMove);
-                    checkGameOver();
-                    
-                    // Save game sau mỗi nước đi
-                    SaveLoadManager::saveGame(gameState, gameMode, "public/save.txt");
-                }
-            }
-        }
-    }
-    
-    /**
-     * Render everything
-     */
-    void render(sf::RenderWindow& window) {
-        window.clear(sf::Color(40, 40, 40));
-        
-        if (currentPhase == GamePhase::MENU) {
-            menuView.renderMainMenu(window, menuSelection);
-        } else if (currentPhase == GamePhase::MODE_SELECT) {
-            menuView.renderModeSelection(window, modeSelection);
-        } else if (currentPhase == GamePhase::PLAYING || currentPhase == GamePhase::GAME_OVER) {
-            boardView.render(window, gameState.getBoard());
-            uiView.renderTurnIndicator(window, gameState.getCurrentTurn());
-            uiView.renderStatusMessage(window, statusMessage);
-            uiView.renderMoveHistory(window, gameState.getMoveHistory());
-            uiView.renderCapturedPieces(window, gameState.getCapturedPieces());
-        } else if (currentPhase == GamePhase::PROMOTION) {
-            boardView.render(window, gameState.getBoard());
-            uiView.renderPromotionDialog(window, gameState.getCurrentTurn());
-        }
-    }
-    
-private:
     /**
      * Handle menu input
      */
@@ -130,7 +49,7 @@ private:
             } else if (event.key.code == sf::Keyboard::Enter) {
                 if (menuSelection == 0) { // New Game
                     currentPhase = GamePhase::MODE_SELECT;
-                } else if (menuSelection == 1) { // Continue
+                } else if (menuSelection == 1) { // Load Game
                     if (SaveLoadManager::loadGame(gameState, gameMode, "public/save.txt")) {
                         currentPhase = GamePhase::PLAYING;
                     }
@@ -228,7 +147,7 @@ private:
     }
     
     /**
-     * Handle promotion input (simple: click to select)
+     * Handle promotion input
      */
     void handlePromotionInput(const sf::Event& event) {
         if (event.type == sf::Event::KeyPressed) {
@@ -286,13 +205,79 @@ private:
             statusMessage = "";
         }
     }
-    
+
 public:
+    /**
+     * Constructor
+     */
+    GameController() 
+        : aiPlayer(3), currentPhase(GamePhase::MENU), gameMode(GameMode::PVP),
+          pieceSelected(false), menuSelection(0), modeSelection(0) {
+    }
+    
+    /**
+     * Handle input events
+     */
+    void handleEvent(const sf::Event& event) {
+        if (currentPhase == GamePhase::MENU) {
+            handleMenuInput(event);
+        } else if (currentPhase == GamePhase::MODE_SELECT) {
+            handleModeSelectInput(event);
+        } else if (currentPhase == GamePhase::PLAYING) {
+            handleGameInput(event);
+        } else if (currentPhase == GamePhase::PROMOTION) {
+            handlePromotionInput(event);
+        }
+    }
+    
+    /**
+     * Update game logic (for AI moves)
+     */
+    void update() {
+        if (currentPhase == GamePhase::PLAYING) {
+            // Nếu là AI mode và đến lượt AI (BLACK)
+            if (gameMode == GameMode::PVE_AI && 
+                gameState.getCurrentTurn() == PieceColor::BLACK) {
+                
+                // AI tính nước đi
+                Move aiMove = aiPlayer.getBestMove(gameState);
+                
+                if (aiMove.from.isValid()) {
+                    gameState.makeMove(aiMove);
+                    checkGameOver();
+                    
+                    // Save game sau mỗi nước đi
+                    SaveLoadManager::saveGame(gameState, gameMode, "public/save.txt");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Render everything
+     */
+    void render(sf::RenderWindow& window) {
+        window.clear(sf::Color(40, 40, 40));
+        
+        if (currentPhase == GamePhase::MENU) {
+            menuView.renderMainMenu(window, menuSelection);
+        } else if (currentPhase == GamePhase::MODE_SELECT) {
+            menuView.renderModeSelection(window, modeSelection);
+        } else if (currentPhase == GamePhase::PLAYING || currentPhase == GamePhase::GAME_OVER) {
+            boardView.render(window, gameState.getBoard());
+            uiView.renderTurnIndicator(window, gameState.getCurrentTurn());
+            uiView.renderStatusMessage(window, statusMessage);
+            uiView.renderMoveHistory(window, gameState.getMoveHistory());
+            uiView.renderCapturedPieces(window, gameState.getCapturedPieces());
+        } else if (currentPhase == GamePhase::PROMOTION) {
+            boardView.render(window, gameState.getBoard());
+            uiView.renderPromotionDialog(window, gameState.getCurrentTurn());
+        }
+    }
+    
     /**
      * Getter cho menu selection (để handle exit trong main)
      */
     int getMenuSelection() const { return menuSelection; }
     GamePhase getCurrentPhase() const { return currentPhase; }
 };
-
-#endif // GAMECONTROLLER_H
